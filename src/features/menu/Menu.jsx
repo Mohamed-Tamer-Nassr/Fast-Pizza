@@ -5,7 +5,6 @@ import MenuItem from "./MenuItem";
 function Menu() {
   // the third and the last Step for fetching data using react router
   const menu = useLoaderData();
-  console.log(menu);
   return (
     <ul>
       {menu.map((pizza) => (

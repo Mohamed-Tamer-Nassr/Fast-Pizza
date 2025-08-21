@@ -1,5 +1,6 @@
-import { Form, redirect } from "react-router-dom";
+import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
+import Loader from "../../ui/Loader";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str) =>
@@ -34,13 +35,16 @@ const fakeCart = [
 function CreateOrder() {
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
-
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "loading";
+  const formData = useActionData();
   return (
     <div>
       <h2>Ready to order? Let&apos;s go!</h2>
 
       {/* <Form method="POST" action="/order/new"> */}
       <Form method="POST" action="/order/new">
+        {isLoading && <Loader />}
         <div>
           <label>First Name</label>
           <input type="text" name="customer" required />
@@ -51,6 +55,7 @@ function CreateOrder() {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          {formData?.phone && <p>{formData.phone}</p>}
         </div>
 
         <div>
@@ -73,7 +78,9 @@ function CreateOrder() {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <button>Order now</button>
+          <button disabled={isLoading}>
+            {isLoading ? "Placing order..." : "Order now"}
+          </button>
         </div>
       </Form>
     </div>
@@ -82,11 +89,18 @@ function CreateOrder() {
 export async function action({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
+
   const order = {
     ...data,
     cart: JSON.parse(data.cart),
     priority: data.priority === "on",
   };
+
+  const error = {};
+  if (!isValidPhone(order.phone))
+    error.phone = "Please give us your correct phone number for contact you.";
+  if (Object.keys(error).length > 0) return error;
+  // if every thing is okay. then, create a new one
   const newOrder = await createOrder(order);
   return redirect(`/order/${newOrder.id}`);
 }
