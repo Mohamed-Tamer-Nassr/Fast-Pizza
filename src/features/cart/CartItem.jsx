@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { formatCurrency } from "../../utils/helpers";
 
 function CartItem({ item }) {
@@ -14,5 +15,14 @@ function CartItem({ item }) {
     </li>
   );
 }
+
+CartItem.propTypes = {
+  item: PropTypes.shape({
+    pizzaId: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired,
+    totalPrice: PropTypes.number.isRequired,
+  }).isRequired,
+};
 
 export default CartItem;

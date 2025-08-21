@@ -4,45 +4,66 @@
 
 @layer components {
   .input {
-    @apply w-full rounded-full border border-stone-200 px-2 py-1 transition-all duration-300 placeholder:text-stone-400 focus:border-none focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2 md:px-4 md:py-2;
+    @apply w-full rounded-full border border-stone-200 px-2 py-1 transition-all duration-300 placeholder:text-center placeholder:text-stone-400 focus:border-none focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2 sm:px-4 sm:py-2 md:px-6 md:py-3;
   }
 }
 /* https://dev.to/afif/i-made-100-css-loaders-for-your-next-project-4eje */
 .loader {
-  width: 45px;
-  aspect-ratio: 0.75;
-  --c: no-repeat linear-gradient(#333 0 0);
-  background:
-    var(--c) 0% 50%,
-    var(--c) 50% 50%,
-    var(--c) 100% 50%;
-  background-size: 20% 50%;
-  animation: loading 1s infinite linear;
+  --size: 70px;
+  --color: #fbbf24;
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
 }
 
-@keyframes loading {
-  20% {
-    background-position:
-      0% 0%,
-      50% 50%,
-      100% 50%;
+.loader::before,
+.loader::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  inset: 0;
+  border: 6px solid transparent;
+  border-top-color: var(--color);
+  border-right-color: var(--color);
+  animation: spin 1.2s linear infinite;
+}
+
+.loader::after {
+  inset: 12%;
+  border: 6px solid transparent;
+  border-bottom-color: var(--color);
+  border-left-color: var(--color);
+  animation-direction: reverse;
+}
+
+.loader span {
+  width: 30%;
+  height: 30%;
+  background: var(--color);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+  box-shadow:
+    0 0 20px var(--color),
+    0 0 40px var(--color);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  40% {
-    background-position:
-      0% 100%,
-      50% 0%,
-      100% 50%;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.7;
   }
-  60% {
-    background-position:
-      0% 50%,
-      50% 100%,
-      100% 0%;
-  }
-  80% {
-    background-position:
-      0% 50%,
-      50% 50%,
-      100% 100%;
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
   }
 }
