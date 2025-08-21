@@ -11,7 +11,7 @@ function AppLayout() {
       {isLoading && <Loader />}
       <Header />
       <main>
-        <h1 style={{ color: "red" }}>The Content</h1>
+        <h1>The Content</h1>
         <Outlet />
       </main>
       <CartOverview />
