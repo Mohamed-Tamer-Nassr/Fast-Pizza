@@ -6,7 +6,7 @@ function Menu() {
   // the third and the last Step for fetching data using react router
   const menu = useLoaderData();
   return (
-    <ul>
+    <ul className="divide-y divide-stone-200">
       {menu.map((pizza) => (
         <MenuItem pizza={pizza} key={pizza.id} />
       ))}

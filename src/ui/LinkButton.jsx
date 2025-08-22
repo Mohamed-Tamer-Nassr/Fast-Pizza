@@ -7,7 +7,7 @@ function LinkButton({ children, to }) {
   if (to === "-1")
     return (
       <button
-        className="text-sm text-blue-500 hover:text-blue-700 hover:underline"
+        className="text-sm text-blue-500 hover:text-blue-700 hover:underline md:text-xl"
         onClick={() => navigate(-1)}
       >
         {children}
@@ -16,7 +16,7 @@ function LinkButton({ children, to }) {
   return (
     <Link
       to={to}
-      className="text-sm text-blue-500 hover:text-blue-700 hover:underline"
+      className="text-sm text-blue-500 hover:text-blue-700 hover:underline md:text-xl"
     >
       {children}
     </Link>
