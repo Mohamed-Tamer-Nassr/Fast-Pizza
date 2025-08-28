@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
+import store from "../../store";
 import Button from "../../ui/Button";
-import { getCart } from "../cart/cartSlice";
-import EmptyCart from "../cart/EmptyCart";
+import { clearCart, getCart, totalPrice } from "../cart/cartSlice";
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
@@ -11,14 +12,16 @@ const isValidPhone = (str) =>
   );
 
 function CreateOrder() {
-  // const [withPriority, setWithPriority] = useState(false);
   const cart = useSelector(getCart);
+  const [withPriority, setWithPriority] = useState(false);
   const userName = useSelector((state) => state.user.userName);
-
+  const totalCartPrice = useSelector(totalPrice);
+  const totalPriority = withPriority ? totalCartPrice * 0.2 : 0;
+  const theEndTotal = totalCartPrice + totalPriority;
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   const formData = useActionData();
-  if (!cart.length) return <EmptyCart />;
+  // if (!cart.length) return <EmptyCart />;
   return (
     <div className="px-4">
       <h2 className="mb-8 text-xl font-semibold md:text-2xl">
@@ -69,8 +72,8 @@ function CreateOrder() {
             type="checkbox"
             name="priority"
             id="priority"
-            // value={withPriority}
-            // onChange={(e) => setWithPriority(e.target.checked)}
+            value={withPriority}
+            onChange={(e) => setWithPriority(e.target.checked)}
           />
           <label
             className="font-medium sm:text-lg md:text-xl"
@@ -86,7 +89,7 @@ function CreateOrder() {
             disabled={isLoading}
             className="mt-4 inline-block rounded-lg bg-yellow-400 px-2 py-1 text-sm font-semibold uppercase text-stone-800 transition-all duration-300 hover:bg-black hover:text-yellow-400 focus:outline-none focus-visible:ring focus-visible:ring-yellow-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Placing order..." : "Order now"}
+            {isLoading ? "Placing order..." : `Order now from €${theEndTotal}`}
           </Button>
         </div>
       </Form>
@@ -100,7 +103,7 @@ export async function action({ request }) {
   const order = {
     ...data,
     cart: JSON.parse(data.cart),
-    priority: data.priority === "on",
+    priority: data.priority === "true",
   };
 
   const error = {};
@@ -108,6 +111,7 @@ export async function action({ request }) {
     error.phone = "Please give us your correct phone number for contact you.";
   if (Object.keys(error).length > 0) return error;
   // if every thing is okay. then, create a new one
+  store.dispatch(clearCart());
   const newOrder = await createOrder(order);
   return redirect(`/order/${newOrder.id}`);
 }
