@@ -11,7 +11,7 @@ import OrderItem from "./OrderItem";
 
 function Order() {
   const order = useLoaderData();
-  // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
+
   const {
     id,
     status,
@@ -45,17 +45,17 @@ function Order() {
       <div className="flex flex-wrap items-center justify-between gap-2 bg-stone-200 px-6 py-5">
         <p className="text-sm font-medium sm:text-xl md:text-2xl">
           {deliveryIn >= 0
-            ? `Only ${calcMinutesLeft(estimatedDelivery)} minutes left 😃`
+            ? `Only ${deliveryIn} minutes left 😃`
             : "Order should have arrived"}
         </p>
-        <p className="text-xm text-stone-500 sm:text-xl md:text-2xl">
+        <p className="text-xs text-stone-500 sm:text-xl md:text-2xl">
           (Estimated delivery: {formatDate(estimatedDelivery)})
         </p>
       </div>
 
       <ul className="divide-y divide-stone-300 border-b border-t">
-        {cart.map((order) => (
-          <OrderItem item={order} key={order.id} />
+        {cart.map((item) => (
+          <OrderItem item={item} key={item.pizzaId || item.id} />
         ))}
       </ul>
 
@@ -75,8 +75,10 @@ function Order() {
     </div>
   );
 }
+
 export async function loader({ params }) {
   const order = await getOrder(params.orderId);
   return order;
 }
+
 export default Order;
